@@ -1,17 +1,19 @@
 ﻿  DapperDasher.cpp
 C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(9,39): warning C4305: 'initializing': truncation from 'double' to 'float'
 C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(9,39): warning C4305: 'initializing': truncation from 'double' to 'const float'
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(92,76): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(92,60): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(102,110): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(102,83): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(102,59): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(169,33): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(208,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(214,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(222,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(228,15): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(291,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(101,76): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(101,60): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(112,110): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(112,83): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(112,59): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(139,59): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(161,56): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(184,33): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(223,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(229,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(237,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(243,15): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\DapperDasher.cpp(306,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   DapperDasher.vcxproj -> C:\Users\jwcla\OneDrive - Clap Nation\Documents\Businesses\Unemployed Chicken\CPP-Prac\dapper_dasher\x64\Debug\DapperDasher.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.

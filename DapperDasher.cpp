@@ -9,15 +9,21 @@ const int targetFps{ 60 };
 const float characterSpriteSpeed{ 1.0 / 12.0 };
 const float nebula_sprite_activation{ 2.0 };
 
+float background_x{ 0.0 };
+float midground_x{ 0.0 };
+float foreground_x{ 0.0 };
+
 bool isOnGround{ true };
-bool nebula_currently_exists{ false };
+bool hasHitNebula{ false };
 
 // Movement Mechanics
 const int gravity{ 1000 }; // pixels/sec/sec
 int nebulaVelocityX{ 400 }; // pixels per frame
 int scarfyVelocityY{ 0 }; // pixels per frame
 const int jumpVelocity{ 600 }; // pixels/sec
-const int backgroundVelocityX{ 20 }; // pixels per frame
+const int backgroundVelocityX{ 25 }; // pixels per frame
+const int midgroundVelocityX{ 80 }; // pixels per frame
+const int foregroundVelocityX{ 300 }; // pixels per frame
 
 // Game Mechanics
 const bool displayValues{ false };
@@ -70,6 +76,8 @@ void changeNebulaePosition(AnimData nebulae[number_of_nebulae], const float dT);
 void drawNebulae(Texture2D nebula_text, AnimData nebulae[number_of_nebulae]);
 int generateRandomPixelCount();
 void unloadAllTextures(Texture2D all[texture_count]);
+void drawAllBackgrounds(const Texture2D back, const Texture2D mid, const Texture2D fore, const float dT);
+bool checkForCollision(AnimData scarfy, AnimData nebulae[number_of_nebulae]);
 
 
 
@@ -82,6 +90,7 @@ int main() {
     float seconds_since_animation_update{ 0.0 };
     float seconds_since_last_nebula{ 0.0 };
 
+    // Background Textures
     Texture2D background = LoadTexture("textures\\far-buildings.png");
     Texture2D middleground = LoadTexture("textures\\back-buildings.png");
     Texture2D foreground = LoadTexture("textures\\foreground.png");
@@ -95,15 +104,15 @@ int main() {
     Texture2D nebula_text = LoadTexture("textures\\12_nebula_spritesheet.png");
     AnimData nebulae[number_of_nebulae];
     
+    // All Textures stored for removal at end
     Texture2D all_textures[texture_count] = { background, middleground, foreground, scarfy_text,  nebula_text };
 
 
     for (int i{ 0 }; i < number_of_nebulae; ++i) {
         nebulae[i] = AnimData(0.0, 0.0, nebula_text.width / 8, nebula_text.height / 8, (window_dimensions[0] + generateRandomPixelCount() * i));
     }
-
-
-    float bgX{};
+   
+    float finish_line{ nebulae[number_of_nebulae - 1].pos.x + 500 };
 
     while (!WindowShouldClose()) {
         // Time from last frame
@@ -116,12 +125,8 @@ int main() {
         BeginDrawing();
         ClearBackground(WHITE);
 
-        
-        bgX -= backgroundVelocityX * dT;
-
         // Draw the background
-        Vector2 begPos{ bgX, 0.0 };
-        DrawTextureEx(background, begPos, 0.0, 2.0, WHITE);
+        drawAllBackgrounds(background, middleground, foreground, dT);
 
         // Update velocity of Scarfy
         applyGravity(scarfy.bottom, dT);
@@ -130,21 +135,31 @@ int main() {
             jump(dT);
         }
 
-        // Change Character Position
-        changePositionY(scarfy, dT);
+        if (finish_line <= scarfy.right) {
+            DrawText("VICTORY!!!!!", window_dimensions[0] * .25, window_dimensions[1] / 2, 50, DARKPURPLE);
+        }
+        else if (!hasHitNebula) {
+            // Change Character Position
+            changePositionY(scarfy, dT);
 
-        // Change Nebula Position
-        changeNebulaePosition(nebulae, dT);
+            // Change Nebula Position
+            changeNebulaePosition(nebulae, dT);
 
-        // Draw Scarfy
-        DrawTextureRec(scarfy_text, scarfy.rect, scarfy.pos, WHITE);
+            // Change Finishline Position
+            finish_line -= nebulaVelocityX * dT;
 
-        // Draw Nebulae
-        drawNebulae(nebula_text, nebulae);
+            // Draw Scarfy
+            DrawTextureRec(scarfy_text, scarfy.rect, scarfy.pos, WHITE);
 
-        
-        isOnGround = setIsOnGround(scarfy.bottom);
-        nebula_currently_exists = setNebulaCurrentlyExists(nebulae[0].right);
+            // Draw Nebulae
+            drawNebulae(nebula_text, nebulae);
+
+            isOnGround = setIsOnGround(scarfy.bottom);
+            hasHitNebula = checkForCollision(scarfy, nebulae);
+        }
+        else {
+            DrawText("GAME OVER", window_dimensions[0] * .25, window_dimensions[1] / 2, 50, DARKPURPLE);
+        }
 
         // For testing purposes:
         if (displayValues) {
@@ -298,4 +313,61 @@ void unloadAllTextures(Texture2D all[texture_count]) {
     for (int i = 0; i < texture_count; ++i) {
         UnloadTexture(all[i]);
     }
+}
+
+void drawAllBackgrounds(const Texture2D back, const Texture2D mid, const Texture2D fore,  const float dT) {
+    background_x -= backgroundVelocityX * dT;
+    midground_x -= midgroundVelocityX * dT;
+    foreground_x -= foregroundVelocityX * dT;
+
+    if (background_x <= -back.width * 2) { background_x = 0.0; }
+    if (midground_x <= -mid.width * 2) { midground_x = 0.0; }
+    if (foreground_x <= -fore.width * 2) { foreground_x = 0.0; }
+
+    // Draw Background
+    Vector2 background_1_pos{ background_x, 0.0 };
+    Vector2 background_2_pos{ background_x + back.width * 2, 0.0 };
+    DrawTextureEx(back, background_1_pos, 0.0, 2.0, WHITE);
+    DrawTextureEx(back, background_2_pos, 0.0, 2.0, WHITE);
+
+    // Draw Midground
+    Vector2 midground_1_pos{ midground_x, 0.0 };
+    Vector2 midground_2_pos{ midground_x + mid.width * 2, 0.0 };
+    DrawTextureEx(mid, midground_1_pos, 0.0, 2.0, WHITE);
+    DrawTextureEx(mid, midground_2_pos, 0.0, 2.0, WHITE);
+
+    // Draw Foreground
+    Vector2 foreground_1_pos{ foreground_x, 0.0 };
+    Vector2 foreground_2_pos{ foreground_x + fore.width * 2, 0.0 };
+    DrawTextureEx(fore, foreground_1_pos, 0.0, 2.0, WHITE);
+    DrawTextureEx(fore, foreground_2_pos, 0.0, 2.0, WHITE);
+}
+
+bool checkForCollision(AnimData scarfy, AnimData nebulae[number_of_nebulae]) {
+    // We do not need to remove padding from Scarfy because the reference images does not have much white space around the sprite
+    Rectangle scarfyRec{
+        scarfy.pos.x,
+        scarfy.pos.y,
+        scarfy.rect.width,
+        scarfy.rect.height
+    };
+    
+    for (int i = 0; i < number_of_nebulae; ++i) {
+        // Used to remove white space surrounding Nebula
+        float pad{ 50 }; 
+        Rectangle nebRec{
+            // Removes space on the left and top of nebula got
+            nebulae[i].pos.x + pad,
+            nebulae[i].pos.y + pad,
+            
+            // Removes Space on bottom and right. This is multiplied by 2 because we take 20 off the top AND 20 off the bottom
+            nebulae[i].rect.width - 2 * pad,
+            nebulae[i].rect.height - 2 * pad
+        };
+
+        if (CheckCollisionRecs(scarfyRec, nebRec)) {
+            return true;
+        }
+    }
+    return false;
 }
