@@ -15,6 +15,7 @@ float foreground_x{ 0.0 };
 
 bool isOnGround{ true };
 bool hasHitNebula{ false };
+bool start{ false };
 
 // Movement Mechanics
 const int gravity{ 1000 }; // pixels/sec/sec
@@ -23,13 +24,13 @@ int scarfyVelocityY{ 0 }; // pixels per frame
 const int jumpVelocity{ 600 }; // pixels/sec
 const int backgroundVelocityX{ 25 }; // pixels per frame
 const int midgroundVelocityX{ 80 }; // pixels per frame
-const int foregroundVelocityX{ 300 }; // pixels per frame
+const int foregroundVelocityX{ 200 }; // pixels per frame
 
 // Game Mechanics
-const bool displayValues{ false };
-const int number_of_nebulae{ 6 };
-const int min_space_between_nebulae{ 600 };
+const int number_of_nebulae{ 3 };
+const int min_space_between_nebulae{ 500 };
 const int texture_count{ 5 };
+const int first_nebula_buffer{ 500 }; // pixels
 
 
 // All Structures
@@ -69,12 +70,13 @@ void changePositionY(AnimData& obj, const float dT);
 void changePositionX(AnimData& obj, const int velocity, const float dT);
 bool setIsOnGround(const float bottom);
 bool setNebulaCurrentlyExists(const float right);
-void displayTestData(Vector2 scarfyPos, Vector2 nebulaPos, float scarfy_bottom_side, float nebula_right_side);
 void updateAnimation(AnimData& obj, int mod);
 void updateAnimations(AnimData& scarfy, AnimData nebulae[number_of_nebulae], const float dT);
 void changeNebulaePosition(AnimData nebulae[number_of_nebulae], const float dT);
 void drawNebulae(Texture2D nebula_text, AnimData nebulae[number_of_nebulae]);
 int generateRandomPixelCount();
+int generateRandomPixelCountShort(const int pixels);
+int generateRandomPixelCountLong(const int pixels);
 void unloadAllTextures(Texture2D all[texture_count]);
 void drawAllBackgrounds(const Texture2D back, const Texture2D mid, const Texture2D fore, const float dT);
 bool checkForCollision(AnimData scarfy, AnimData nebulae[number_of_nebulae]);
@@ -107,12 +109,16 @@ int main() {
     // All Textures stored for removal at end
     Texture2D all_textures[texture_count] = { background, middleground, foreground, scarfy_text,  nebula_text };
 
-
+    srand(time(0));
+    int nebula_buffer{ first_nebula_buffer };
     for (int i{ 0 }; i < number_of_nebulae; ++i) {
-        nebulae[i] = AnimData(0.0, 0.0, nebula_text.width / 8, nebula_text.height / 8, (window_dimensions[0] + generateRandomPixelCount() * i));
+        nebula_buffer += generateRandomPixelCount();
+        nebulae[i] = AnimData(0.0, 0.0, nebula_text.width / 8, nebula_text.height / 8, (window_dimensions[0] + nebula_buffer));
+        std::cout << "Nebula " << i << " Starting X-Pos:" << window_dimensions[0] + nebula_buffer << '\n';
     }
    
-    float finish_line{ nebulae[number_of_nebulae - 1].pos.x + 500 };
+    float finish_line{ window_dimensions[0] + nebulae[number_of_nebulae - 1].pos.x };
+    std::cout << "EndLine X-Pos:" << 800 + nebulae[number_of_nebulae - 1].pos.x << '\n';
 
     while (!WindowShouldClose()) {
         // Time from last frame
@@ -128,42 +134,42 @@ int main() {
         // Draw the background
         drawAllBackgrounds(background, middleground, foreground, dT);
 
-        // Update velocity of Scarfy
-        applyGravity(scarfy.bottom, dT);
-        
-        if (IsKeyPressed(KEY_SPACE) && isOnGround) {
-            jump(dT);
-        }
+        if (start) {
+            // Update velocity of Scarfy
+            applyGravity(scarfy.bottom, dT);
 
-        if (finish_line <= scarfy.right) {
-            DrawText("VICTORY!!!!!", window_dimensions[0] * .25, window_dimensions[1] / 2, 50, DARKPURPLE);
-        }
-        else if (!hasHitNebula) {
-            // Change Character Position
-            changePositionY(scarfy, dT);
+            if (IsKeyPressed(KEY_SPACE) && isOnGround) {
+                jump(dT);
+            }
 
-            // Change Nebula Position
-            changeNebulaePosition(nebulae, dT);
+            if (finish_line <= scarfy.right) {
+                DrawText("VICTORY!!!!!", window_dimensions[0] * .25, window_dimensions[1] / 2, 50, DARKPURPLE);
+            }
+            else if (!hasHitNebula) {
+                // Change Character Position
+                changePositionY(scarfy, dT);
 
-            // Change Finishline Position
-            finish_line -= nebulaVelocityX * dT;
+                // Change Nebula Position
+                changeNebulaePosition(nebulae, dT);
 
-            // Draw Scarfy
-            DrawTextureRec(scarfy_text, scarfy.rect, scarfy.pos, WHITE);
+                // Change Finishline Position
+                finish_line -= nebulaVelocityX * dT;
 
-            // Draw Nebulae
-            drawNebulae(nebula_text, nebulae);
+                // Draw Scarfy
+                DrawTextureRec(scarfy_text, scarfy.rect, scarfy.pos, WHITE);
 
-            isOnGround = setIsOnGround(scarfy.bottom);
-            hasHitNebula = checkForCollision(scarfy, nebulae);
+                // Draw Nebulae
+                drawNebulae(nebula_text, nebulae);
+
+                isOnGround = setIsOnGround(scarfy.bottom);
+                hasHitNebula = checkForCollision(scarfy, nebulae);
+            }
+            else {
+                DrawText("GAME OVER", window_dimensions[0] * .25, window_dimensions[1] / 2, 50, DARKPURPLE);
+            }
         }
         else {
-            DrawText("GAME OVER", window_dimensions[0] * .25, window_dimensions[1] / 2, 50, DARKPURPLE);
-        }
-
-        // For testing purposes:
-        if (displayValues) {
-            displayTestData(scarfy.pos, nebulae[0].pos, scarfy.bottom, nebulae[0].right);
+            start = IsKeyPressed(KEY_ENTER);
         }
 
         EndDrawing();
@@ -217,55 +223,6 @@ bool setNebulaCurrentlyExists(const float right) {
 }
 
 
-void displayTestData(Vector2 scarfyPos, Vector2 nebulaPos, float scarfy_bottom_side, float nebula_right_side) {
-    char scarftopbase[] = "ScarfyRec.Y: ";
-    char scarfY[50];
-    int top = scarfyPos.y;
-    sprintf_s(scarfY, "%s%d", scarftopbase, top);
-    DrawText(scarfY, 20, 25, 20, BLACK);
-
-    char scarfbottombase[] = "Scarfy Feet: ";
-    char scarfB[50];
-    int bot = scarfy_bottom_side;
-    sprintf_s(scarfB, "%s%d", scarfbottombase, bot);
-    DrawText(scarfB, 20, 50, 20, BLACK);
-
-    DrawText("-------------------------", 20, 75, 20, BLACK);
-
-    char nebulaLeftBase[] = "nebulaRec.X: ";
-    char neb[50];
-    int left = nebulaPos.x;
-    sprintf_s(neb, "%s%d", nebulaLeftBase, left);
-    DrawText(neb, 20, 100, 20, BLACK);
-
-    char nebularightBase[] = "nebula Right: ";
-    char nebR[50];
-    int right = nebula_right_side;
-    sprintf_s(nebR, "%s%d", nebularightBase, right);
-    DrawText(nebR, 20, 125, 20, BLACK);
-
-    DrawText("-------------------------", 20, 150, 20, BLACK);
-
-    char yVelBase[] = "scarfyVelocityY: ";
-    char yvel[50];
-    sprintf_s(yvel, "%s%i", yVelBase, scarfyVelocityY);
-    DrawText(yvel, 20, 175, 20, BLACK);
-
-    char xVelBase[] = "nebulaVelocityX: ";
-    char xvel[50];
-    sprintf_s(xvel, "%s%i", xVelBase, nebulaVelocityX);
-    DrawText(xvel, 20, 200, 20, BLACK);
-
-    DrawText("-------------------------", 20, 225, 20, BLACK);
-
-    char isOnGroundBase[] = "isOnGround: ";
-    char ground[50];
-    sprintf_s(ground, "%s%i", isOnGroundBase, isOnGround);
-    DrawText(ground, 20, 250, 20, BLACK);
-
-}
-
-
 void updateAnimation(AnimData& obj, int mod) {
     obj.rect.x = obj.rect.width * (obj.frame % mod);
     obj.runTime = 0.0;
@@ -300,14 +257,22 @@ void drawNebulae(Texture2D nebula_text, AnimData nebulae[number_of_nebulae]) {
 }
 
 
-
-// Future Work: Make a short and long randomizer. Randomly choose if it is a long or short pause
 int generateRandomPixelCount() {
-    srand(time(0));
-    int i = rand() % ( 12 ); // 12 too long
-    return (i * 100) + min_space_between_nebulae;
+    int i = rand() %  12; 
+    int nebulaDistance = rand() % 10;
+    if (nebulaDistance < 3) {
+        return generateRandomPixelCountLong(i);
+    } 
+    return generateRandomPixelCountShort(i);
 }
 
+int generateRandomPixelCountShort(const int pixels) {
+    return (pixels * 50) + min_space_between_nebulae;
+}
+
+int generateRandomPixelCountLong(const int pixels) {
+    return (pixels * 100) + min_space_between_nebulae * 4;
+}
 
 void unloadAllTextures(Texture2D all[texture_count]) {
     for (int i = 0; i < texture_count; ++i) {
@@ -371,3 +336,4 @@ bool checkForCollision(AnimData scarfy, AnimData nebulae[number_of_nebulae]) {
     }
     return false;
 }
+
